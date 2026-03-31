@@ -100,9 +100,9 @@ While Fargate and EC2 do not suffer from "cold starts" in the same way (as the s
 ### Assignment 5: Cost at Zero Load
 
 
-![Cennik Lambda](results/figures/pricing-screenshots/lambda_pricing.png)
-![Cennik Fargate](results/figures/pricing-screenshots/fargate_pricing.png)
-![Cennik EC2](results/figures/pricing-screenshots/ec2_pricing.png)
+![Cennik Lambda](figures/pricing-screenshots/lambda_pricing.png)
+![Cennik Fargate](figures/pricing-screenshots/fargate_pricing.png)
+![Cennik EC2](figures/pricing-screenshots/ec2_pricing.png)
 
 
 The following table calculates the costs for each environment when they are in an idle state (no traffic being processed)
@@ -188,7 +188,7 @@ Conclusion: If the sustained average traffic exceeds 12 RPS, Fargate becomes the
 
 The chart indicates that for the provided traffic model (averaging ~3.2 RPS over 24 hours), Lambda remains significantly more economical than always-on instances.
 
-![cost-vs-rps](figures/cost-vs-rps.pngpng)
+![cost-vs-rps](figures/cost-vs-rps.png)
 
 4. Recommendation
 
