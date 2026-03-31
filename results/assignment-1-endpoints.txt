@@ -1,0 +1,1088 @@
+ppusk@Patrycja:/mnt/c/Users/ppusk/lsc-lab4-aws-cloud-r2-puskarczyk$ bash deploy/06-workstation.sh
+Config loaded: ACCOUNT_ID=905418315174, REGION=us-east-1
+=== Step 6: EC2 Workstation (t3.small) ===
+Using pre-created key pair: vockey
+NOTE: Download the PEM file from 'AWS Details' in the Learner Lab console.
+  Save it as ~/.ssh/labsuser.pem and run: chmod 600 ~/.ssh/labsuser.pem
+Creating workstation security group...
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0e94ceb08c93b473b",
+            "GroupId": "sg-0c7c27a176e07cb3b",
+            "GroupOwnerId": "905418315174",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIpv4": "0.0.0.0/0",
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:905418315174:security-group-rule/sgr-0e94ceb08c93b473b"
+        }
+    ]
+}
+Security Group: sg-0c7c27a176e07cb3b
+Repo to clone on workstation: https://github.com/2026-AGH-lsc-lab/lsc-lab4-aws-cloud-r2-puskarczyk
+Launching workstation...
+Instance ID: i-030e627a7f5c33d34
+Waiting for instance to be running...
+=== Workstation ready. Public IP: 44.192.254.159 ===
+SSH: ssh -i /home/ppusk/.ssh/labsuser.pem ec2-user@44.192.254.159
+NOTE: Wait ~2 minutes for user-data to complete, then:
+  ssh -i /home/ppusk/.ssh/labsuser.pem ec2-user@44.192.254.159
+  cd lsc-lab4-aws-cloud-r2-puskarczyk && oha --version && docker --version
+
+
+
+ppusk@Patrycja:/mnt/c/Users/ppusk/lsc-lab4-aws-cloud-r2-puskarczyk$ cp /mnt/c/Users/ppusk/lsc-lab4-aws-cloud-r2-puskarczyk/.ssh/labsuser.pem ~/.ssh/labsuser.pem
+ppusk@Patrycja:/mnt/c/Users/ppusk/lsc-lab4-aws-cloud-r2-puskarczyk$ chmod 400 ~/.ssh/labsuser.pem
+ppusk@Patrycja:/mnt/c/Users/ppusk/lsc-lab4-aws-cloud-r2-puskarczyk$ ls -l ~/.ssh/labsuser.pem
+-r-------- 1 ppusk ppusk 1678 Mar 29 13:33 /home/ppusk/.ssh/labsuser.pem
+ppusk@Patrycja:/mnt/c/Users/ppusk/lsc-lab4-aws-cloud-r2-puskarczyk$ ssh -i ~/.ssh/labsuser.pem ec2-user@44.192.254.159
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+Last login: Sun Mar 29 11:24:34 2026
+[ec2-user@ip-172-31-73-17 ~]$ cd lsc-lab4-aws-cloud-r2-puskarczyk
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ aws sts get-caller-identity
+{
+    "UserId": "AROA5FTZDCWTOKCOCRZOR:i-030e627a7f5c33d34",
+    "Account": "905418315174",
+    "Arn": "arn:aws:sts::905418315174:assumed-role/LabRole/i-030e627a7f5c33d34"
+}
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash deploy/01-ecr.sh
+=== Step 1: ECR Repository & Docker Image ===
+Creating ECR repository...
+Repository already exists.
+Logging into ECR...
+WARNING! Your password will be stored unencrypted in /home/ec2-user/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+Building Docker image...
+[+] Building 15.6s (11/11) FINISHED                                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                                      0.0s
+ => => transferring dockerfile: 536B                                                                                      0.0s
+ => [internal] load metadata for public.ecr.aws/lambda/python:3.12                                                        0.4s
+ => [internal] load .dockerignore                                                                                         0.0s
+ => => transferring context: 2B                                                                                           0.0s
+ => [1/6] FROM public.ecr.aws/lambda/python:3.12@sha256:648e32be9b6fc5aee51678ced10b29811bbe13238297a642a6e2d74c13ab2950  9.5s
+ => => resolve public.ecr.aws/lambda/python:3.12@sha256:648e32be9b6fc5aee51678ced10b29811bbe13238297a642a6e2d74c13ab2950  0.0s
+ => => sha256:bf639fcde9663382fc2fd50df00b201a612144ac9efcfc6d1b3615841314b821 38.70MB / 38.70MB                          0.3s
+ => => sha256:0f8e17ebe104fccf492c132f1f54df4d5359c26e1544b0acc2b9c17f03d45337 415B / 415B                                0.1s
+ => => sha256:648e32be9b6fc5aee51678ced10b29811bbe13238297a642a6e2d74c13ab2950 772B / 772B                                0.0s
+ => => sha256:2cec35c9e4bd4d35dc293c2d110f9c985bc5263d44294476e7cef61c8c94de9c 1.58kB / 1.58kB                            0.0s
+ => => sha256:d6491bd496545559b164f448aa1220f2289199289ba446d45691cc16e7d598b0 4.63kB / 4.63kB                            0.0s
+ => => sha256:ad80184b1415013a8f505f8143cabf2839788ec756d4f77460939f7ac96f5bee 88.13kB / 88.13kB                          0.1s
+ => => sha256:8047b6686600dea20135a885196e918915c3e2243dbe66ff273c346c5f72fbe3 3.77MB / 3.77MB                            0.2s
+ => => sha256:334f552cdd2a5406ccd9342a4b8d8ef48b866c25131de170f47312629490c292 146.08MB / 146.08MB                        1.5s
+ => => sha256:0c5a64f80aa75cb7fc771a7d5d7d0899b2cb8238168b3ea8f0bd807b749546a4 14.20kB / 14.20kB                          0.3s
+ => => extracting sha256:bf639fcde9663382fc2fd50df00b201a612144ac9efcfc6d1b3615841314b821                                 2.2s
+ => => extracting sha256:ad80184b1415013a8f505f8143cabf2839788ec756d4f77460939f7ac96f5bee                                 0.0s
+ => => extracting sha256:0f8e17ebe104fccf492c132f1f54df4d5359c26e1544b0acc2b9c17f03d45337                                 0.0s
+ => => extracting sha256:8047b6686600dea20135a885196e918915c3e2243dbe66ff273c346c5f72fbe3                                 0.1s
+ => => extracting sha256:334f552cdd2a5406ccd9342a4b8d8ef48b866c25131de170f47312629490c292                                 6.4s
+ => => extracting sha256:0c5a64f80aa75cb7fc771a7d5d7d0899b2cb8238168b3ea8f0bd807b749546a4                                 0.0s
+ => [internal] load build context                                                                                         0.0s
+ => => transferring context: 3.84kB                                                                                       0.0s
+ => [2/6] COPY requirements.txt /var/task/                                                                                0.2s
+ => [3/6] RUN pip install --no-cache-dir -r /var/task/requirements.txt                                                    4.3s
+ => [4/6] COPY app.py handler.py generate_dataset.py /var/task/                                                           0.1s
+ => [5/6] COPY entrypoint.sh /entrypoint.sh                                                                               0.0s
+ => [6/6] RUN chmod +x /entrypoint.sh                                                                                     0.3s
+ => exporting to image                                                                                                    0.6s
+ => => exporting layers                                                                                                   0.5s
+ => => writing image sha256:2e6934dcd6fea8f4a787fbb8a71472c40eca19bf330997873d49b554e32744e9                              0.0s
+ => => naming to docker.io/library/lsc-knn-app:latest                                                                     0.0s
+Pushing image to ECR...
+The push refers to repository [905418315174.dkr.ecr.us-east-1.amazonaws.com/lsc-knn-app]
+e2e2b7169f42: Pushed
+83fd42355c46: Pushed
+3bdae73bde65: Pushed
+595def1616ec: Pushed
+2c8c98e29484: Pushed
+26e1649b71e6: Pushed
+5deef087727c: Pushed
+7b5fab1ac0a3: Pushed
+2897aed799e0: Pushed
+4411d2f6e5d8: Pushed
+40c41abed735: Layer already exists
+latest: digest: sha256:28c875608a3b70999ecf4aa76c28c4d2625fe5947d8fb2a58f56e8bdca496fde size: 2619
+=== ECR done. Image URI: 905418315174.dkr.ecr.us-east-1.amazonaws.com/lsc-knn-app:latest ===
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash deploy/01-ecr.sh
+=== Step 1: ECR Repository & Docker Image ===
+Creating ECR repository...
+Repository already exists.
+Logging into ECR...
+WARNING! Your password will be stored unencrypted in /home/ec2-user/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+Building Docker image...
+[+] Building 0.3s (11/11) FINISHED                                                                              docker:default
+ => [internal] load build definition from Dockerfile                                                                      0.0s
+ => => transferring dockerfile: 536B                                                                                      0.0s
+ => [internal] load metadata for public.ecr.aws/lambda/python:3.12                                                        0.2s
+ => [internal] load .dockerignore                                                                                         0.0s
+ => => transferring context: 2B                                                                                           0.0s
+ => [1/6] FROM public.ecr.aws/lambda/python:3.12@sha256:648e32be9b6fc5aee51678ced10b29811bbe13238297a642a6e2d74c13ab2950  0.0s
+ => [internal] load build context                                                                                         0.0s
+ => => transferring context: 439B                                                                                         0.0s
+ => CACHED [2/6] COPY requirements.txt /var/task/                                                                         0.0s
+ => CACHED [3/6] RUN pip install --no-cache-dir -r /var/task/requirements.txt                                             0.0s
+ => CACHED [4/6] COPY app.py handler.py generate_dataset.py /var/task/                                                    0.0s
+ => CACHED [5/6] COPY entrypoint.sh /entrypoint.sh                                                                        0.0s
+ => CACHED [6/6] RUN chmod +x /entrypoint.sh                                                                              0.0s
+ => exporting to image                                                                                                    0.0s
+ => => exporting layers                                                                                                   0.0s
+ => => writing image sha256:2e6934dcd6fea8f4a787fbb8a71472c40eca19bf330997873d49b554e32744e9                              0.0s
+ => => naming to docker.io/library/lsc-knn-app:latest                                                                     0.0s
+Pushing image to ECR...
+The push refers to repository [905418315174.dkr.ecr.us-east-1.amazonaws.com/lsc-knn-app]
+e2e2b7169f42: Layer already exists
+83fd42355c46: Layer already exists
+3bdae73bde65: Layer already exists
+595def1616ec: Layer already exists
+2c8c98e29484: Layer already exists
+26e1649b71e6: Layer already exists
+5deef087727c: Layer already exists
+7b5fab1ac0a3: Layer already exists
+2897aed799e0: Layer already exists
+4411d2f6e5d8: Layer already exists
+40c41abed735: Layer already exists
+latest: digest: sha256:28c875608a3b70999ecf4aa76c28c4d2625fe5947d8fb2a58f56e8bdca496fde size: 2619
+=== ECR done. Image URI: 905418315174.dkr.ecr.us-east-1.amazonaws.com/lsc-knn-app:latest ===
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ aws ecr describe-images --repository-name lsc-knn-app --image-ids
+imageTag=latest --query 'imageDetails[0].imageTags'
+[
+    "latest"
+]
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash deploy/02-lambda-zip.sh
+=== Step 2: Lambda Zip Deployment ===
+Building NumPy Lambda layer...
+Unable to find image 'python:3.12-slim' locally
+3.12-slim: Pulling from library/python
+ec781dee3f47: Pull complete
+b1a20e2fae4c: Pull complete
+a6d1911b36ac: Pull complete
+e3c59d77c03e: Pull complete
+Digest: sha256:3d5ed973e45820f5ba5e46bd065bd88b3a504ff0724d85980dcd05eab361fcf4
+Status: Downloaded newer image for python:3.12-slim
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
+Publishing Lambda layer...
+Layer ARN: arn:aws:lambda:us-east-1:905418315174:layer:numpy-py312:4
+Packaging Lambda zip...
+  adding: handler.py (deflated 51%)
+  adding: app.py (deflated 49%)
+  adding: generate_dataset.py (deflated 28%)
+Creating Lambda function (zip)...
+Function exists, updating code...
+arn:aws:lambda:us-east-1:905418315174:function:lsc-knn-zip
+arn:aws:lambda:us-east-1:905418315174:function:lsc-knn-zip
+Waiting for function to become active...
+Creating Function URL...
+=== Lambda Zip done. Function URL: https://utod72df25m6qpewqqjt3lllxe0iiucf.lambda-url.us-east-1.on.aws/ ===
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ aws lambda invoke --function-name lsc-knn-zip \
+    --cli-binary-format raw-in-base64-out \
+    --payload "$(python3 -c 'import json; q=json.load(open("loadtest/query.json")); print(json.dumps({"body": json.dumps(q)}))')" \
+    /tmp/out.json
+
+cat /tmp/out.json
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}
+{"statusCode": 200, "headers": {"Content-Type": "application/json", "X-Server-Time-Ms": "81.756", "X-Instance-Id": "2026/03/29/[$LATEST]95abc7f511fc4d638a2839b018eb8a26", "X-Cold-Start": "true"}, "body": "{\"results\": [{\"index\": 35859, \"distance\": 12.001459121704102}, {\"index\": 24682, \"distance\": 12.059946060180664}, {\"index\": 35397, \"distance\": 12.487079620361328}, {\"index\": 20160, \"distance\": 12.489519119262695}, {\"index\": 30454, \"distance\": 12.499402046203613}], \"query_time_ms\": 81.756, \"instance_id\": \"2026/03/29/[$LATEST]95abc7f511fc4d638a2839b018eb8a26\", \"cold_start\": true}"}
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash deploy/03-lambda-container.sh
+=== Step 3: Lambda Container Image Deployment ===
+Creating Lambda function (container)...
+Function exists, updating code...
+arn:aws:lambda:us-east-1:905418315174:function:lsc-knn-container
+
+An error occurred (ResourceConflictException) when calling the UpdateFunctionConfiguration operation: The operation cannot be performed at this time. An update is in progress for resource: arn:aws:lambda:us-east-1:905418315174:function:lsc-knn-container
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ aws lambda get-function --function-name lsc-knn-container --query 'Configuration.State'
+"Active"
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash deploy/03-lambda-container.sh
+=== Step 3: Lambda Container Image Deployment ===
+Creating Lambda function (container)...
+Function exists, updating code...
+arn:aws:lambda:us-east-1:905418315174:function:lsc-knn-container
+
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ aws lambda invoke --function-name lsc-knn-container \
+    --cli-binary-format raw-in-base64-out \
+    --payload "$(python3 -c 'import json; q=json.load(open("loadtest/query.json")); print(json.dumps({"body": json.dumps(q)}))')" \
+    /tmp/out.json
+cat /tmp/out.json
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}
+{"statusCode": 200, "headers": {"Content-Type": "application/json", "X-Server-Time-Ms": "74.239", "X-Instance-Id": "2026/03/29/[$LATEST]f909d59e97bc417388ec09052a6454a0", "X-Cold-Start": "true"}, "body": "{\"results\": [{\"index\": 35859, \"distance\": 12.001459121704102}, {\"index\": 24682, \"distance\": 12.059946060180664}, {\"index\": 35397, \"distance\": 12.487079620361328}, {\"index\": 20160, \"distance\": 12.489519119262695}, {\"index\": 30454, \"distance\": 12.499402046203613}], \"query_time_ms\": 74.239, \"instance_id\": \"2026/03/29/[$LATEST]f909d59e97bc417388ec09052a6454a0\", \"cold_start\": true}"}
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash deploy/04-fargate.sh
+=== Step 4: ECS Fargate with ALB ===
+Finding default VPC...
+VPC: vpc-061e3b125a663c220
+Finding subnets (need 2+ AZs for ALB)...
+Subnets: subnet-0a7dbc8993258138f, subnet-0bbeeeb2db8f0acc8
+Creating ALB security group...
+ALB SG: sg-0edd9dbfd7ddac5e6
+Creating task security group...
+Task SG: sg-0e6829f8235122500
+Creating ECS cluster...
+arn:aws:ecs:us-east-1:905418315174:cluster/lsc-knn-cluster
+Creating log group...
+Registering task definition...
+Task definition: arn:aws:ecs:us-east-1:905418315174:task-definition/lsc-knn-task:4
+Creating ALB...
+ALB ARN: arn:aws:elasticloadbalancing:us-east-1:905418315174:loadbalancer/app/lsc-knn-alb/dcbcd0720f172e65
+ALB DNS: lsc-knn-alb-1444994507.us-east-1.elb.amazonaws.com
+Creating target group...
+Target Group: arn:aws:elasticloadbalancing:us-east-1:905418315174:targetgroup/lsc-knn-tg/12c5611fe7d2e751
+Creating ALB listener...
+Listener: arn:aws:elasticloadbalancing:us-east-1:905418315174:listener/app/lsc-knn-alb/dcbcd0720f172e65/82a2375e2714061e
+Creating ECS service...
+Service already exists, updating...
+arn:aws:ecs:us-east-1:905418315174:service/lsc-knn-cluster/lsc-knn-service
+Waiting for ECS service to stabilize (this may take 1-2 minutes)...
+=== Fargate done. ALB URL: http://lsc-knn-alb-1444994507.us-east-1.elb.amazonaws.com ===
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ curl -X POST -H "Content-Type: application/json" -d @loadtest/query.json http://lsc-knn-alb-1444994507.us-east-1.elb.amazonaws.com/search
+{"instance_id":"ip-172-31-87-189.ec2.internal","query_time_ms":23.593,"results":[{"distance":12.001459121704102,"index":35859},{"distance":12.059946060180664,"index":24682},{"distance":12.487079620361328,"index":35397},{"distance":12.489519119262695,"index":20160},{"distance":12.499402046203613,"index":30454}]}
+
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash deploy/05-ec2-app.sh
+=== Step 5: EC2 Application Instance (t3.small) ===
+Creating app security group...
+Security Group: sg-04029e73e63a820c0
+Finding latest Amazon Linux 2023 AMI...
+AMI: ami-0cb5cf49019e79c51
+Checking for LabInstanceProfile...
+Instance Profile: LabInstanceProfile
+Instance already running: i-09ee1998c4cf071da
+Instance ID: i-09ee1998c4cf071da
+Waiting for instance to be running...
+=== EC2 App done. Public IP: 3.234.214.145 ===
+URL: http://3.234.214.145:8080
+NOTE: Wait ~2 minutes for Docker to pull and start the container.
+Test with: curl -X POST -H 'Content-Type: application/json' -d @loadtest/query.json http://3.234.214.145:8080/search
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$  curl -X POST -H 'Content-Type: application/json' -d @loadtest/query.json http://3.234.214.145:8080/search
+curl: (7) Failed to connect to 3.234.214.145 port 8080 after 0 ms: Could not connect to server
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ ssh ec2-user@44.192.254.159
+The authenticity of host '44.192.254.159 (44.192.254.159)' can't be established.
+ED25519 key fingerprint is SHA256:Tr5T3GO1E79RwpytJvaKRnaYpuBitAdwhgKuEsHROaY.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '44.192.254.159' (ED25519) to the list of known hosts.
+ec2-user@44.192.254.159: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ python3 loadtest/generate_query.py > loadtest/query.json
+Traceback (most recent call last):
+  File "/home/ec2-user/lsc-lab4-aws-cloud-r2-puskarczyk/loadtest/generate_query.py", line 4, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ pip install numpy
+Defaulting to user installation because normal site-packages is not writeable
+Collecting numpy
+  Downloading numpy-2.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (19.5 MB)
+     |████████████████████████████████| 19.5 MB 15.7 MB/s
+Installing collected packages: numpy
+Successfully installed numpy-2.0.2
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ python3 loadtest/generate_query.py > loadtest/query.json
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ # Test via CLI invoke (bypasses Function URL auth):
+aws lambda invoke --function-name lsc-knn-zip \
+    --cli-binary-format raw-in-base64-out \
+    --payload "$(python3 -c 'import json; q=json.load(open("loadtest/query.json")); print(json.dumps({"body": json.dumps(q)}))')" \
+    /tmp/out.json
+cat /tmp/out.json
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}
+{"statusCode": 200, "headers": {"Content-Type": "application/json", "X-Server-Time-Ms": "78.813", "X-Instance-Id": "2026/03/29/[$LATEST]70b75a4ba9f3414a98f097ea6b3c5b99", "X-Cold-Start": "true"}, "body": "{\"results\": [{\"index\": 35859, \"distance\": 12.001459121704102}, {\"index\": 24682, \"distance\": 12.059946060180664}, {\"index\": 35397, \"distance\": 12.487079620361328}, {\"index\": 20160, \"distance\": 12.489519119262695}, {\"index\": 30454, \"distance\": 12.499402046203613}], \"query_time_ms\": 78.813, \"instance_id\": \"2026/03/29/[$LATEST]70b75a4ba9f3414a98f097ea6b3c5b99\", \"cold_start\": true}"}
+
+
+
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ source loadtest/endpoints.sh
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash loadtest/scenario-a.sh "https://utod72df25m6qpewqqjt3lllxe0iiucf.lambda-url.us-east-1.on.aws/" "https://w54fxtzc3miqq3lhvgnsvnskj40thhnw.lambda-url.us-east-1.on.aws/"
+=== Scenario A: Lambda Cold Start Characterization ===
+Ensure Lambda has been idle for 20+ minutes before running.
+
+--- Lambda Zip (30 sequential requests, 1/sec) ---
+Summary:
+  Success rate: 100.00%
+  Total:        30053.0444 ms
+  Slowest:      104.1744 ms
+  Fastest:      10.7033 ms
+  Average:      20.8884 ms
+  Requests/sec: 0.9982
+
+  Total data:   4.22 KiB
+  Size/request: 144 B
+  Size/sec:     143 B
+
+Response time histogram:
+   10.703 ms [1]  |■
+   20.050 ms [24] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+   29.398 ms [2]  |■■
+   38.745 ms [1]  |■
+   48.092 ms [1]  |■
+   57.439 ms [0]  |
+   66.786 ms [0]  |
+   76.133 ms [0]  |
+   85.480 ms [0]  |
+   94.827 ms [0]  |
+  104.174 ms [1]  |■
+
+Response time distribution:
+  10.00% in 14.2258 ms
+  25.00% in 15.1596 ms
+  50.00% in 17.0064 ms
+  75.00% in 18.6192 ms
+  90.00% in 32.2245 ms
+  95.00% in 44.0705 ms
+  99.00% in 104.1744 ms
+  99.90% in 104.1744 ms
+  99.99% in 104.1744 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   51.0084 ms, 51.0084 ms, 51.0084 ms
+  DNS-lookup:   0.0874 ms, 0.0874 ms, 0.0874 ms
+
+Status code distribution:
+  [403] 30 responses
+
+Waiting 20 minutes before container variant (for cold start reset)...
+Press Ctrl+C to skip the wait if running variants separately.
+Sleeping 1200s (20 min)...
+
+--- Lambda Container (30 sequential requests, 1/sec) ---
+Summary:
+  Success rate: 100.00%
+  Total:        30052.3101 ms
+  Slowest:      90.7694 ms
+  Fastest:      9.6978 ms
+  Average:      20.2299 ms
+  Requests/sec: 0.9983
+
+  Total data:   4.22 KiB
+  Size/request: 144 B
+  Size/sec:     143 B
+
+Response time histogram:
+   9.698 ms [1]  |■
+  17.805 ms [19] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  25.912 ms [7]  |■■■■■■■■■■■
+  34.019 ms [1]  |■
+  42.126 ms [1]  |■
+  50.234 ms [0]  |
+  58.341 ms [0]  |
+  66.448 ms [0]  |
+  74.555 ms [0]  |
+  82.662 ms [0]  |
+  90.769 ms [1]  |■
+
+Response time distribution:
+  10.00% in 14.5718 ms
+  25.00% in 15.5896 ms
+  50.00% in 16.7897 ms
+  75.00% in 18.3851 ms
+  90.00% in 32.5119 ms
+  95.00% in 34.9382 ms
+  99.00% in 90.7694 ms
+  99.90% in 90.7694 ms
+  99.99% in 90.7694 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   51.8379 ms, 51.8379 ms, 51.8379 ms
+  DNS-lookup:   0.1021 ms, 0.1021 ms, 0.1021 ms
+
+Status code distribution:
+  [403] 30 responses
+
+=== Scenario A complete. Results in /home/ec2-user/lsc-lab4-aws-cloud-r2-puskarczyk/loadtest/../results ===
+
+Next: check CloudWatch for Init Duration (cold start) entries:
+  aws logs filter-log-events --log-group-name /aws/lambda/lsc-knn-zip --filter-pattern 'Init Duration' --start-time $(date -d '30 minutes ago' +%s000) --query 'events[*].message' --output text
+  aws logs filter-log-events --log-group-name /aws/lambda/lsc-knn-container --filter-pattern 'Init Duration' --start-time $(date -d '30 minutes ago' +%s000) --query 'events[*].message' --output text
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$   aws logs filter-log-events --log-group-name /aws/lambda/lsc-knn-zip --filter-pattern 'Init Duration' --start-time $(date -d '30 minutes ago' +%s000) --query 'events[*].message' --output text
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$   aws logs filter-log-events --log-group-name /aws/lambda/lsc-knn-container --filter-pattern 'Init Duration' --start-time $(date -d '30 minutes ago' +%s000) --query 'events[*].message' --output text
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ source loadtest/endpoints.sh
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash loadtest/scenario-b.sh "https://utod72df25m6qpewqqjt3lllxe0iiucf.lambda-url.us-east-1.on.aws/" "https://w54fxtzc3miqq3lhvgnsvnskj40thhnw.lambda-url.us-east-1.on.aws/" "http://lsc-knn-alb-1444994507.us-east-1.elb.amazonaws.com" "http://lsc-knn-alb-1444994507.us-east-1.elb.amazonaws.com"
+=== Scenario B: Warm Steady-State Throughput ===
+
+NOTE: Lambda concurrency is capped at 10 (AWS Academy limit: max 10 concurrent
+Lambda execution environments). Fargate/EC2 use c=10 and c=50.
+
+--- Warm-up phase ---
+  Warming up Lambda Zip (60 requests at c=10)...
+  Warming up Lambda Container (60 requests at c=10)...
+  Warming up Fargate (60 requests at c=50)...
+  Warming up EC2 (60 requests at c=50)...
+Warm-up complete.
+
+=== lambda-zip | concurrency=5 | 500 requests ===
+Summary:
+  Success rate: 100.00%
+  Total:        1411.8742 ms
+  Slowest:      71.9206 ms
+  Fastest:      5.1647 ms
+  Average:      14.0192 ms
+  Requests/sec: 354.1392
+
+  Total data:   70.31 KiB
+  Size/request: 144 B
+  Size/sec:     49.80 KiB
+
+Response time histogram:
+   5.165 ms [1]   |
+  11.840 ms [194] |■■■■■■■■■■■■■■■■■■■■■■■■
+  18.516 ms [250] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  25.191 ms [50]  |■■■■■■
+  31.867 ms [0]   |
+  38.543 ms [0]   |
+  45.218 ms [0]   |
+  51.894 ms [0]   |
+  58.569 ms [0]   |
+  65.245 ms [1]   |
+  71.921 ms [4]   |
+
+Response time distribution:
+  10.00% in 8.4696 ms
+  25.00% in 10.4903 ms
+  50.00% in 13.5595 ms
+  75.00% in 16.5488 ms
+  90.00% in 18.6838 ms
+  95.00% in 20.1832 ms
+  99.00% in 60.8559 ms
+  99.90% in 71.9206 ms
+  99.99% in 71.9206 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   51.7902 ms, 51.1964 ms, 52.5118 ms
+  DNS-lookup:   0.0179 ms, 0.0080 ms, 0.0524 ms
+
+Status code distribution:
+  [403] 500 responses
+
+=== lambda-zip | concurrency=10 | 500 requests ===
+Summary:
+  Success rate: 100.00%
+  Total:        616.4982 ms
+  Slowest:      75.4743 ms
+  Fastest:      4.7445 ms
+  Average:      12.1234 ms
+  Requests/sec: 811.0324
+
+  Total data:   70.31 KiB
+  Size/request: 144 B
+  Size/sec:     114.05 KiB
+
+Response time histogram:
+   4.744 ms [1]   |
+  11.817 ms [325] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  18.890 ms [151] |■■■■■■■■■■■■■■
+  25.963 ms [11]  |■
+  33.036 ms [2]   |
+  40.109 ms [0]   |
+  47.182 ms [0]   |
+  54.255 ms [0]   |
+  61.328 ms [0]   |
+  68.401 ms [8]   |
+  75.474 ms [2]   |
+
+Response time distribution:
+  10.00% in 6.9109 ms
+  25.00% in 8.9052 ms
+  50.00% in 10.7373 ms
+  75.00% in 12.6146 ms
+  90.00% in 15.9220 ms
+  95.00% in 18.4502 ms
+  99.00% in 67.6060 ms
+  99.90% in 75.4743 ms
+  99.99% in 75.4743 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   54.9540 ms, 53.5427 ms, 56.1686 ms
+  DNS-lookup:   0.0167 ms, 0.0082 ms, 0.0590 ms
+
+Status code distribution:
+  [403] 500 responses
+
+=== lambda-container | concurrency=5 | 500 requests ===
+Summary:
+  Success rate: 100.00%
+  Total:        1469.2569 ms
+  Slowest:      76.4970 ms
+  Fastest:      4.9314 ms
+  Average:      14.5515 ms
+  Requests/sec: 340.3081
+
+  Total data:   70.31 KiB
+  Size/request: 144 B
+  Size/sec:     47.86 KiB
+
+Response time histogram:
+   4.931 ms [1]   |
+  12.088 ms [170] |■■■■■■■■■■■■■■■■■■■
+  19.245 ms [282] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  26.401 ms [37]  |■■■■
+  33.558 ms [4]   |
+  40.714 ms [1]   |
+  47.871 ms [0]   |
+  55.027 ms [0]   |
+  62.184 ms [0]   |
+  69.340 ms [2]   |
+  76.497 ms [3]   |
+
+Response time distribution:
+  10.00% in 7.9839 ms
+  25.00% in 10.6748 ms
+  50.00% in 14.5891 ms
+  75.00% in 16.8345 ms
+  90.00% in 19.1764 ms
+  95.00% in 20.7502 ms
+  99.00% in 65.2027 ms
+  99.90% in 76.4970 ms
+  99.99% in 76.4970 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   51.7584 ms, 51.3781 ms, 52.3079 ms
+  DNS-lookup:   0.0186 ms, 0.0082 ms, 0.0545 ms
+
+Status code distribution:
+  [403] 500 responses
+
+=== lambda-container | concurrency=10 | 500 requests ===
+Summary:
+  Success rate: 100.00%
+  Total:        579.4543 ms
+  Slowest:      84.2516 ms
+  Fastest:      5.1873 ms
+  Average:      11.4583 ms
+  Requests/sec: 862.8808
+
+  Total data:   70.31 KiB
+  Size/request: 144 B
+  Size/sec:     121.34 KiB
+
+Response time histogram:
+   5.187 ms [1]   |
+  13.094 ms [408] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  21.000 ms [79]  |■■■■■■
+  28.907 ms [2]   |
+  36.813 ms [0]   |
+  44.719 ms [0]   |
+  52.626 ms [0]   |
+  60.532 ms [0]   |
+  68.439 ms [8]   |
+  76.345 ms [1]   |
+  84.252 ms [1]   |
+
+Response time distribution:
+  10.00% in 6.8895 ms
+  25.00% in 7.8980 ms
+  50.00% in 9.8200 ms
+  75.00% in 11.9957 ms
+  90.00% in 15.5498 ms
+  95.00% in 17.4468 ms
+  99.00% in 66.5787 ms
+  99.90% in 84.2516 ms
+  99.99% in 84.2516 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   52.6494 ms, 51.6350 ms, 53.5901 ms
+  DNS-lookup:   0.0136 ms, 0.0080 ms, 0.0525 ms
+
+Status code distribution:
+  [403] 500 responses
+
+=== fargate | concurrency=10 | 500 requests ===
+Summary:
+  Success rate: 100.00%
+  Total:        41.2938 sec
+  Slowest:      1.2960 sec
+  Fastest:      0.2513 sec
+  Average:      0.8216 sec
+  Requests/sec: 12.1083
+
+  Total data:   153.26 KiB
+  Size/request: 313 B
+  Size/sec:     3.71 KiB
+
+Response time histogram:
+  0.251 sec [1]   |
+  0.356 sec [1]   |
+  0.460 sec [2]   |
+  0.565 sec [18]  |■■■■
+  0.669 sec [49]  |■■■■■■■■■■■
+  0.774 sec [88]  |■■■■■■■■■■■■■■■■■■■■
+  0.878 sec [137] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.983 sec [97]  |■■■■■■■■■■■■■■■■■■■■■■
+  1.087 sec [71]  |■■■■■■■■■■■■■■■■
+  1.192 sec [32]  |■■■■■■■
+  1.296 sec [4]   |
+
+Response time distribution:
+  10.00% in 0.6089 sec
+  25.00% in 0.7064 sec
+  50.00% in 0.8034 sec
+  75.00% in 0.9107 sec
+  90.00% in 1.0094 sec
+  95.00% in 1.0967 sec
+  99.00% in 1.1869 sec
+  99.90% in 1.2960 sec
+  99.99% in 1.2960 sec
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0010 sec, 0.0006 sec, 0.0016 sec
+  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0002 sec
+
+Status code distribution:
+  [200] 500 responses
+
+=== fargate | concurrency=50 | 500 requests ===
+Summary:
+  Success rate: 100.00%
+  Total:        41.9758 sec
+  Slowest:      4.9959 sec
+  Fastest:      0.1875 sec
+  Average:      4.0196 sec
+  Requests/sec: 11.9116
+
+  Total data:   153.25 KiB
+  Size/request: 313 B
+  Size/sec:     3.65 KiB
+
+Response time histogram:
+  0.188 sec [1]   |
+  0.668 sec [5]   |
+  1.149 sec [6]   |
+  1.630 sec [3]   |
+  2.111 sec [8]   |
+  2.592 sec [7]   |
+  3.073 sec [3]   |
+  3.553 sec [6]   |
+  4.034 sec [110] |■■■■■■■■■■■
+  4.515 sec [312] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  4.996 sec [39]  |■■■■
+
+Response time distribution:
+  10.00% in 3.8945 sec
+  25.00% in 4.0089 sec
+  50.00% in 4.1681 sec
+  75.00% in 4.3004 sec
+  90.00% in 4.4943 sec
+  95.00% in 4.5976 sec
+  99.00% in 4.8035 sec
+  99.90% in 4.9959 sec
+  99.99% in 4.9959 sec
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0013 sec, 0.0007 sec, 0.0019 sec
+  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0001 sec
+
+Status code distribution:
+  [200] 500 responses
+
+=== ec2 | concurrency=10 | 500 requests ===
+Summary:
+  Success rate: 100.00%
+  Total:        42.2707 sec
+  Slowest:      1.4060 sec
+  Fastest:      0.0690 sec
+  Average:      0.8418 sec
+  Requests/sec: 11.8285
+
+  Total data:   153.27 KiB
+  Size/request: 313 B
+  Size/sec:     3.62 KiB
+
+Response time histogram:
+  0.069 sec [1]   |
+  0.203 sec [0]   |
+  0.336 sec [0]   |
+  0.470 sec [6]   |■
+  0.604 sec [32]  |■■■■■■
+  0.738 sec [100] |■■■■■■■■■■■■■■■■■■■■
+  0.871 sec [134] |■■■■■■■■■■■■■■■■■■■■■■■■■■
+  1.005 sec [159] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  1.139 sec [49]  |■■■■■■■■■
+  1.272 sec [12]  |■■
+  1.406 sec [7]   |■
+
+Response time distribution:
+  10.00% in 0.6269 sec
+  25.00% in 0.7135 sec
+  50.00% in 0.8116 sec
+  75.00% in 0.9235 sec
+  90.00% in 1.0827 sec
+  95.00% in 1.1051 sec
+  99.00% in 1.3055 sec
+  99.90% in 1.4060 sec
+  99.99% in 1.4060 sec
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0007 sec, 0.0005 sec, 0.0010 sec
+  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0001 sec
+
+Status code distribution:
+  [200] 500 responses
+
+=== ec2 | concurrency=50 | 500 requests ===
+Summary:
+  Success rate: 100.00%
+  Total:        42.1714 sec
+  Slowest:      5.0822 sec
+  Fastest:      0.2637 sec
+  Average:      4.0333 sec
+  Requests/sec: 11.8564
+
+  Total data:   153.27 KiB
+  Size/request: 313 B
+  Size/sec:     3.63 KiB
+
+Response time histogram:
+  0.264 sec [1]   |
+  0.746 sec [6]   |
+  1.227 sec [7]   |
+  1.709 sec [5]   |
+  2.191 sec [7]   |
+  2.673 sec [4]   |
+  3.155 sec [7]   |
+  3.637 sec [6]   |
+  4.118 sec [163] |■■■■■■■■■■■■■■■■■■
+  4.600 sec [276] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  5.082 sec [18]  |■■
+
+Response time distribution:
+  10.00% in 3.8825 sec
+  25.00% in 4.0626 sec
+  50.00% in 4.1998 sec
+  75.00% in 4.3771 sec
+  90.00% in 4.4918 sec
+  95.00% in 4.5612 sec
+  99.00% in 4.7168 sec
+  99.90% in 5.0822 sec
+  99.99% in 5.0822 sec
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0014 sec, 0.0008 sec, 0.0020 sec
+  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0001 sec
+
+Status code distribution:
+  [200] 500 responses
+
+=== Scenario B complete. Results in /home/ec2-user/lsc-lab4-aws-cloud-r2-puskarczyk/loadtest/../results ===
+
+
+
+
+
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ source loadtest/endpoints.sh
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ bash loadtest/scenario-c.sh "https://utod72df25m6qpewqqjt3lllxe0iiucf.lambda-url.us-east-1.on.aws/" "https://w54fxtzc3miqq3lhvgnsvnskj40thhnw.lambda
+-url.us-east-1.on.aws/" "http://lsc-knn-alb-1444994507.us-east-1.elb.amazonaws.com" "http://lsc-knn-alb-1444994507.us-east-1.elb.amazonaws.com"
+=== Scenario C: Burst from Zero ===
+Ensure Lambda has been idle for 20+ minutes.
+
+NOTE: Lambda concurrency is capped at 10 (AWS Academy limit: max 10 concurrent
+Lambda execution environments). Fargate/EC2 use c=50.
+
+Launching burst to ALL targets simultaneously...
+
+Summary:
+  Success rate: 100.00%
+  Total:        409.6049 ms
+  Slowest:      129.4928 ms
+  Fastest:      5.1131 ms
+  Average:      19.9352 ms
+  Requests/sec: 488.2754
+
+  Total data:   28.12 KiB
+  Size/request: 144 B
+  Size/sec:     68.66 KiB
+
+Response time histogram:
+    5.113 ms [1]   |
+   17.551 ms [161] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+   29.989 ms [27]  |■■■■■
+   42.427 ms [0]   |
+   54.865 ms [1]   |
+   67.303 ms [0]   |
+   79.741 ms [0]   |
+   92.179 ms [0]   |
+  104.617 ms [0]   |
+  117.055 ms [0]   |
+  129.493 ms [10]  |■
+
+Response time distribution:
+  10.00% in 8.5708 ms
+  25.00% in 11.6146 ms
+  50.00% in 15.1225 ms
+  75.00% in 16.9656 ms
+  90.00% in 20.4267 ms
+  95.00% in 122.4470 ms
+  99.00% in 127.1914 ms
+  99.90% in 129.4928 ms
+  99.99% in 129.4928 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   90.9280 ms, 90.1499 ms, 91.6770 ms
+  DNS-lookup:   0.0222 ms, 0.0127 ms, 0.0916 ms
+
+Status code distribution:
+  [403] 200 responses
+Summary:
+  Success rate: 100.00%
+  Total:        457.3418 ms
+  Slowest:      136.4010 ms
+  Fastest:      7.6967 ms
+  Average:      22.2614 ms
+  Requests/sec: 437.3097
+
+  Total data:   28.12 KiB
+  Size/request: 144 B
+  Size/sec:     61.50 KiB
+
+Response time histogram:
+    7.697 ms [1]   |
+   20.567 ms [165] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+   33.438 ms [19]  |■■■
+   46.308 ms [4]   |
+   59.178 ms [0]   |
+   72.049 ms [1]   |
+   84.919 ms [0]   |
+   97.790 ms [0]   |
+  110.660 ms [0]   |
+  123.531 ms [0]   |
+  136.401 ms [10]  |■
+
+Response time distribution:
+  10.00% in 10.1310 ms
+  25.00% in 13.6879 ms
+  50.00% in 15.6072 ms
+  75.00% in 18.8198 ms
+  90.00% in 25.2386 ms
+  95.00% in 132.3489 ms
+  99.00% in 135.9802 ms
+  99.90% in 136.4010 ms
+  99.99% in 136.4010 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   96.6572 ms, 94.8577 ms, 98.6949 ms
+  DNS-lookup:   0.0238 ms, 0.0118 ms, 0.0761 ms
+
+Status code distribution:
+  [403] 200 responses
+Summary:
+  Success rate: 100.00%
+  Total:        29.1109 sec
+  Slowest:      8.7047 sec
+  Fastest:      0.4859 sec
+  Average:      6.7921 sec
+  Requests/sec: 6.8703
+
+  Total data:   61.31 KiB
+  Size/request: 313 B
+  Size/sec:     2.11 KiB
+
+Response time histogram:
+  0.486 sec [1]   |
+  1.308 sec [10]  |■■
+  2.130 sec [11]  |■■
+  2.952 sec [10]  |■■
+  3.773 sec [10]  |■■
+  4.595 sec [8]   |■
+  5.417 sec [0]   |
+  6.239 sec [0]   |
+  7.061 sec [0]   |
+  7.883 sec [0]   |
+  8.705 sec [150] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+Response time distribution:
+  10.00% in 2.0127 sec
+  25.00% in 7.9012 sec
+  50.00% in 8.2010 sec
+  75.00% in 8.3085 sec
+  90.00% in 8.4139 sec
+  95.00% in 8.5052 sec
+  99.00% in 8.6763 sec
+  99.90% in 8.7047 sec
+  99.99% in 8.7047 sec
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0015 sec, 0.0007 sec, 0.0025 sec
+  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0001 sec
+
+Status code distribution:
+  [200] 200 responses
+Summary:
+  Success rate: 100.00%
+  Total:        33.0127 sec
+  Slowest:      8.7959 sec
+  Fastest:      4.4095 sec
+  Average:      7.8159 sec
+  Requests/sec: 6.0583
+
+  Total data:   61.31 KiB
+  Size/request: 313 B
+  Size/sec:     1.86 KiB
+
+Response time histogram:
+  4.409 sec [1]   |
+  4.848 sec [4]   |■
+  5.287 sec [4]   |■
+  5.725 sec [7]   |■
+  6.164 sec [4]   |■
+  6.603 sec [8]   |■■
+  7.041 sec [2]   |
+  7.480 sec [8]   |■■
+  7.919 sec [4]   |■
+  8.357 sec [123] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  8.796 sec [35]  |■■■■■■■■■
+
+Response time distribution:
+  10.00% in 6.2855 sec
+  25.00% in 8.0056 sec
+  50.00% in 8.1974 sec
+  75.00% in 8.3065 sec
+  90.00% in 8.4082 sec
+  95.00% in 8.5009 sec
+  99.00% in 8.6990 sec
+  99.90% in 8.7959 sec
+  99.99% in 8.7959 sec
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0033 sec, 0.0008 sec, 0.0046 sec
+  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0001 sec
+
+Status code distribution:
+  [200] 200 responses
+
+=== Scenario C complete. Results in /home/ec2-user/lsc-lab4-aws-cloud-r2-puskarczyk/loadtest/../results ===
+
+
+
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ aws logs filter-log-events \
+    --log-group-name "/aws/lambda/lsc-knn-zip" \
+    --filter-pattern "REPORT" \
+    --start-time $(date -d '3 hours ago' +%s000) \
+    --query 'events[*].message' --output text > results/cloudwatch-zip-reports.txt
+[ec2-user@ip-172-31-73-17 lsc-lab4-aws-cloud-r2-puskarczyk]$ aws logs filter-log-events \
+    --log-group-name "/aws/lambda/lsc-knn-container" \
+    --filter-pattern "REPORT" \
+    --start-time $(date -d '3 hours ago' +%s000) \
+    --query 'events[*].message' --output text > results/cloudwatch-container-reports.txt
+
+
+
+
+
+
+ bash deploy/99-cleanup.sh
+Config loaded: ACCOUNT_ID=905418315174, REGION=us-east-1
+=== Cleaning up all lab resources ===
+Terminating EC2 instances...
+Deleting ECS service...
+Deleting ALB resources...
+  Waiting for ALB to finish deleting before removing target group...
+Deleting ECS cluster...
+Deleting Lambda functions...
+Deleting Lambda layers...
+Deleting ECR repository...
+Waiting for instances to terminate...
+Deleting security groups...
+{
+    "Return": true,
+    "GroupId": "sg-04029e73e63a820c0"
+}
+{
+    "Return": true,
+    "GroupId": "sg-0c7c27a176e07cb3b"
+}
+Deleting log groups...
+=== Cleanup complete ===
+ppusk@Patrycja:/mnt/c/Users/ppusk/lsc-lab4-aws-cloud-r2-puskarczyk$ aws ec2 describe-instances \
+    --filters "Name=tag:Name,Values=lsc-knn-*" "Name=instance-state-name,Values=running" \
+    --query 'Reservations[*].Instances[*].InstanceId' --output text
+ppusk@Patrycja:/mnt/c/Users/ppusk/lsc-lab4-aws-cloud-r2-puskarczyk$ aws ecr describe-repositories --repository-names lsc-knn-app 2>&1 | head -1
